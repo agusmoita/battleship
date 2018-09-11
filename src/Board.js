@@ -66,8 +66,19 @@ export default class Board extends Component {
             }
         ]
     }
-    componentWillMount() {
+    componentDidMount() {
         this.updateBoard()
+    }
+    sleep() {
+        return new Promise(resolve => setTimeout(resolve, 2000));
+    }
+    async componentDidUpdate(prevProps) {
+        if (this.props.player === true) {
+            if (this.props.myTurn !== prevProps.myTurn && this.props.myTurn === false) {
+                await this.sleep()
+                this.handleClick(_.random(0, 9), _.random(0, 9))
+            }
+        }
     }
     updateBoard = () => {
         const ships = this.state.ships;
@@ -81,35 +92,46 @@ export default class Board extends Component {
                 cells[cell.row][cell.col] = fill
             })
         })
+        this.setState({
+            cells
+        })
     }
     handleClick = (row, col) => {
-        const cells = this.state.cells;
-        const cell = cells[row][col];
-        if (cell === 0) {
-            cells[row][col] = 2;
-            this.setState({
-                cells
-            })
-        }
-        else {
-            const ships = this.state.ships;
-            const ship = ships.find(s => {
-                return (s.cells.find(c => {
-                    return c.row === row && c.col === col
-                }) !== undefined)
-            })
-            ship.cells.find(c => {
-                return c.row === row && c.col === col
-            }).hit = true
-            if (_.every(ship.cells, 'hit')) {
-                ship.destroyed = true
+        if (!this.props.myTurn) {
+            const cells = this.state.cells;
+            const cell = cells[row][col];
+            if (cell === 2) return;
+            if (cell === 0) {
+                cells[row][col] = 2;
+                this.setState({
+                    cells
+                })
             }
-            _.remove(ships, { 'age': ship.id })
-            ships.push(ship)
-            this.setState({
-                ships
-            })
-            this.updateBoard()
+            else {
+                const ships = this.state.ships;
+                const ship = ships.find(s => {
+                    return (s.cells.find(c => {
+                        return c.row === row && c.col === col
+                    }) !== undefined)
+                })
+                ship.cells.find(c => {
+                    return c.row === row && c.col === col
+                }).hit = true
+                if (_.every(ship.cells, 'hit')) {
+                    ship.destroyed = true
+                }
+                
+                this.setState({
+                    ships: ships.map(s => 
+                        (s.id === ship.id)
+                        ? ship
+                        : s
+                    )
+                })
+                
+                this.updateBoard()
+            }
+            this.props.selectCell()
         }
     }
     render() {
@@ -118,7 +140,7 @@ export default class Board extends Component {
                 {
                     this.state.cells.map((row, i) => {
                         return row.map((cell, col) => {
-                            return <Cell key={`${i} ${col}`} row={i} col={col} data={cell} handle={this.handleClick} />
+                            return <Cell key={`${i} ${col}`} row={i} col={col} data={cell} player={this.props.player} handle={this.handleClick} />
                         })
                     })
                 }

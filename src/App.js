@@ -4,12 +4,18 @@ import Board from './Board';
 
 class App extends Component {
   state = {
-    nombre: 'Augusto Moita'
+    myTurn: true
+  }
+  changeTurn = () => {
+    this.setState({
+      myTurn: !this.state.myTurn
+    })
   }
   render() {
     return (
       <div className="App">
-        <Board />
+        <Board player={true} myTurn={this.state.myTurn} selectCell={this.changeTurn} />
+        <Board player={false} myTurn={!this.state.myTurn} selectCell={this.changeTurn} />
       </div>
     );
   }

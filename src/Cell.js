@@ -3,7 +3,10 @@ import './Cell.css';
 
 export default class Cell extends Component {
     clickear = () => {
-        this.props.handle(this.props.row, this.props.col)
+        if (!this.props.player) {
+            this.props.handle(this.props.row, this.props.col)
+        }
+        
     }
     render() {
         let fill = '';
