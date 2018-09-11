@@ -1,0 +1,15 @@
+.Cell {
+    border: 1px solid black;
+}
+
+.Cell.water {
+    background-color: aqua;
+}
+
+.Cell.hit {
+    background-color: red;
+}
+
+.Cell.destroy {
+    background-color: orange;
+}
