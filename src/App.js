@@ -1,23 +1,25 @@
 import React, { Component } from 'react';
+import { Switch, Route } from 'react-router-dom';
 import './App.css';
-import Board from './Board';
+import Game from './Game';
+import EndWin from './EndWin';
+import EndLose from './EndLose';
+import EndSurrender from './EndSurrender';
+import Start from './Start';
 
 class App extends Component {
-  state = {
-    myTurn: true
-  }
-  changeTurn = () => {
-    this.setState({
-      myTurn: !this.state.myTurn
-    })
-  }
   render() {
     return (
       <div className="App">
-        <Board player={true} myTurn={this.state.myTurn} selectCell={this.changeTurn} />
-        <Board player={false} myTurn={!this.state.myTurn} selectCell={this.changeTurn} />
+        <Switch>
+          <Route path="/" exact component={Start}/>
+          <Route path="/play" component={Game} />
+          <Route path="/win" component={EndWin} />
+          <Route path="/lose" component={EndLose} />
+          <Route path="/surrender" component={EndSurrender} />
+        </Switch>
       </div>
-    );
+    )
   }
 }
 

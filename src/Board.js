@@ -70,13 +70,15 @@ export default class Board extends Component {
         this.updateBoard()
     }
     sleep() {
-        return new Promise(resolve => setTimeout(resolve, 2000));
+        return new Promise(resolve => setTimeout(resolve, 300));
     }
-    async componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps) {
         if (this.props.player === true) {
             if (this.props.myTurn !== prevProps.myTurn && this.props.myTurn === false) {
-                await this.sleep()
-                this.handleClick(_.random(0, 9), _.random(0, 9))
+                this.sleep().then(() => {
+                        this.handleClick(_.random(0, 9), _.random(0, 9))
+                    }
+                )
             }
         }
     }
@@ -95,29 +97,37 @@ export default class Board extends Component {
         this.setState({
             cells
         })
+        if (_.every(ships, 'destroyed')) {
+            this.props.finish(!this.props.player)
+        }
     }
     handleClick = (row, col) => {
         if (!this.props.myTurn) {
             const cells = this.state.cells;
             const cell = cells[row][col];
-            if (cell === 2) return;
-            if (cell === 0) {
-                cells[row][col] = 2;
-                this.setState({
-                    cells
-                })
+            if (cell >= 2) {
+                if (this.props.player === true) {
+                    this.handleClick(_.random(0, 9), _.random(0, 9))
+                }
             }
             else {
-                const ships = this.state.ships;
-                const ship = ships.find(s => {
-                    return (s.cells.find(c => {
+                if (cell === 0) {
+                    cells[row][col] = 2;
+                    this.setState({
+                        cells
+                    })
+                }
+                else {
+                    const ships = this.state.ships;
+                    const ship = ships.find(s => {
+                        return (s.cells.find(c => {
+                            return c.row === row && c.col === col
+                        }) !== undefined)
+                    })
+                    ship.cells.find(c => {
                         return c.row === row && c.col === col
-                    }) !== undefined)
-                })
-                ship.cells.find(c => {
-                    return c.row === row && c.col === col
-                }).hit = true
-                if (_.every(ship.cells, 'hit')) {
+                    }).hit = true
+                    if (_.every(ship.cells, 'hit')) {
                     ship.destroyed = true
                 }
                 
@@ -126,12 +136,13 @@ export default class Board extends Component {
                         (s.id === ship.id)
                         ? ship
                         : s
-                    )
-                })
-                
-                this.updateBoard()
+                        )
+                    })
+                    
+                    this.updateBoard()
+                }
+                this.props.selectCell()
             }
-            this.props.selectCell()
         }
     }
     render() {
