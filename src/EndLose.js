@@ -1,12 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import End from './End';
 
 const EndLose = () => {
     return (
-        <div>
+        <End>
             <h1>Lose</h1>
-            <Link to="/">Volver</Link>
-        </div>
+        </End>
     )
 }
 

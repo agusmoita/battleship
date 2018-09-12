@@ -2,15 +2,13 @@ import React, { Component } from "react";
 import './Cell.css';
 
 export default class Cell extends Component {
-    clickear = () => {
-        if (!this.props.player) {
-            this.props.handle(this.props.row, this.props.col)
-        }
-        
-    }
     render() {
+        const { data, handle, row, col} = this.props;
         let fill = '';
-        switch (this.props.data) {
+        switch (data) {
+            case 1:
+                if (this.props.player) fill = 'ship';
+                break;
             case 2:
                 fill = 'water';
                 break;
@@ -25,7 +23,12 @@ export default class Cell extends Component {
                 break;
         }
         return (
-            <span className={`Cell ${fill}`} onClick={this.clickear}></span>
+            <span 
+                className={`Cell ${fill}`} 
+                onClick={
+                    () => {handle(row, col)}
+                }
+            ></span>
         );
     }
 }

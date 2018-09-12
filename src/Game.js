@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import './Game.css';
-import Board from './Board'
+import PlayerBoard from './PlayerBoard'
+import EnemyBoard from './EnemyBoard'
 
 class Game extends Component {
     state = {
@@ -26,8 +27,8 @@ class Game extends Component {
         <div className="Game">
             <h1>Turno de { this.state.myTurn ? 'Jugador' : 'CPU' }</h1>
             <div className="Boards">
-                <Board player={true} myTurn={this.state.myTurn} selectCell={this.changeTurn} finish={this.finishGame} />
-                <Board player={false} myTurn={!this.state.myTurn} selectCell={this.changeTurn} finish={this.finishGame} />
+                <PlayerBoard myTurn={this.state.myTurn} selectCell={this.changeTurn} finish={this.finishGame} />
+                <EnemyBoard myTurn={!this.state.myTurn} selectCell={this.changeTurn} finish={this.finishGame} />
             </div>
             <Link to="/surrender">Rendirse</Link>
         </div>

@@ -1,12 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import End from './End';
 
 const EndSurrender = () => {
     return (
-        <div>
+        <End>
             <h1>Surrender</h1>
-            <Link to="/">Volver</Link>
-        </div>
+        </End>
     )
 }
 

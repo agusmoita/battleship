@@ -4,7 +4,9 @@ import { Link } from "react-router-dom";
 class Start extends Component {
     render() {
         return (
-            <Link to="/play">Iniciar</Link>
+            <div>
+                <Link to="/play">Iniciar</Link>
+            </div>
         )
     }
 }
