@@ -65,7 +65,7 @@ class App extends Component {
       <div className="App">
         <Switch>
           <Route path="/" exact render={(props) => (
-            <Start {...props} call={this.updateShips} ships={this.state.ships} change={this.changeCurrentShip}/>
+            <Start {...props} call={this.updateShips} ships={this.state.ships} current={this.state.currentShip} change={this.changeCurrentShip}/>
           )} />
           <Route path="/play" render={(props) => (
             <Game {...props} ships={this.state.ships} />

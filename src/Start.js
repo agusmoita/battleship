@@ -16,11 +16,13 @@ class Start extends Component {
                 <div>
                     {
                         this.props.ships.map(s => {
+                            const isCurrent = this.props.current === s.id
                             return (
                                 <Ship 
                                     key={s.id} 
                                     ship={s}
                                     change={this.change}
+                                    current={isCurrent}
                                 />
                             )
                         })

@@ -8,8 +8,9 @@ class Ship extends Component {
     }
     render() {
         const { ship } = this.props
+        const isCurrent = this.props.current ? 'current' : ''
         return (
-            <div onClick={this.change} className={`Ship ${ship.direction}`}>
+            <div onClick={this.change} className={`Ship ${ship.direction} ${isCurrent}`}>
                 {
                     ship.cells.map((c, i) => {
                         return (
