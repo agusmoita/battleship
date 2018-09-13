@@ -59,11 +59,6 @@ const ships = [
                 row: null,
                 col: null,
                 hit: false
-            },
-            {
-                row: null,
-                col: null,
-                hit: false
             }
         ],
         destroyed: false

@@ -15,12 +15,24 @@ class App extends Component {
     ships
   }
   changeCurrentShip = (id) => {
-    this.setState({
-      currentShip: id
-    })
+    if (id === this.state.currentShip) {
+      this.setState({
+        ships: this.state.ships.map(s => {
+          if (s.id === this.state.currentShip) {
+            s.direction = s.direction === 'horizontal' ? 'vertical' : 'horizontal';
+          }
+
+          return s;
+        })
+      })
+    } else {
+      this.setState({
+        currentShip: id
+      })
+    }
   }
   updateShips = (row, col) => {
-    let valid = true;
+    let valid = [];
     const { currentShip, ships } = this.state;
     const ship = ships.find(s => s.id === currentShip)
     const otherShips = ships.filter(s => s.id !== currentShip)
@@ -33,11 +45,11 @@ class App extends Component {
         col: (direction === 'vertical' ? col : col + index),
         hit: false
       }
-      valid = allCells.every(c => {
+      valid[index] = allCells.every(c => {
         return (c.row !== coords[index].row || c.col !== coords[index].col);
       })
     }
-    if (valid) {
+    if (valid.every(v => v)) {
       ship.cells = coords
       this.setState({
         ships: ships.map(s =>
@@ -55,7 +67,6 @@ class App extends Component {
           <Route path="/" exact render={(props) => (
             <Start {...props} call={this.updateShips} ships={this.state.ships} change={this.changeCurrentShip}/>
           )} />
-          {/* <Route path="/play" component={Game} /> */}
           <Route path="/play" render={(props) => (
             <Game {...props} ships={this.state.ships} />
           )} />

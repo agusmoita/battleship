@@ -1,0 +1,17 @@
+.Ship {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.Ship.horizontal {
+    flex-direction: row;
+}
+
+.Ship.vertical {
+    flex-direction: column;
+}
+
+.Ship .Cell {
+    width: 20px;
+    height: 20px;
+}
