@@ -17,51 +17,7 @@ export default class PlayerBoard extends Component {
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ],
-        ships: [{
-                id: 1,
-                length: 3,
-                direction: 'horizontal',
-                cells: [{
-                        row: 0,
-                        col: 0,
-                        hit: false
-                    },
-                    {
-                        row: 0,
-                        col: 1,
-                        hit: false
-                    },
-                    {
-                        row: 0,
-                        col: 2,
-                        hit: false
-                    },
-                ],
-                destroyed: false
-            },
-            {
-                id: 2,
-                length: 3,
-                direction: 'vertical',
-                cells: [{
-                        row: 3,
-                        col: 7,
-                        hit: false
-                    },
-                    {
-                        row: 4,
-                        col: 7,
-                        hit: false
-                    },
-                    {
-                        row: 5,
-                        col: 7,
-                        hit: false
-                    },
-                ],
-                destroyed: false
-            }
-        ]
+        ships: this.props.ships
     }
     componentDidMount() {
         this.updateBoard()

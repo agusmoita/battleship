@@ -27,7 +27,7 @@ class Game extends Component {
         <div className="Game">
             <h1>Turno de { this.state.myTurn ? 'Jugador' : 'CPU' }</h1>
             <div className="Boards">
-                <PlayerBoard myTurn={this.state.myTurn} selectCell={this.changeTurn} finish={this.finishGame} />
+                <PlayerBoard myTurn={this.state.myTurn} selectCell={this.changeTurn} finish={this.finishGame} ships={this.props.ships} />
                 <EnemyBoard myTurn={!this.state.myTurn} selectCell={this.changeTurn} finish={this.finishGame} />
             </div>
             <Link to="/surrender">Rendirse</Link>
