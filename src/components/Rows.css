@@ -5,9 +5,10 @@
     width: 40px;
     position: absolute;
     top: 14px;
-    left: -20px;
+    left: -35px;
 }
 
 .letter {
+    text-align: center;
     vertical-align: middle;
 }

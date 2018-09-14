@@ -39,7 +39,7 @@ export default class PlayerBoard extends Component {
     })
   }
   sleep() {
-    return new Promise(resolve => setTimeout(resolve, 500));
+    return new Promise(resolve => setTimeout(resolve, 400));
   }
   componentDidUpdate(prevProps) {
     if (this.props.myTurn !== prevProps.myTurn && this.props.myTurn === false) {

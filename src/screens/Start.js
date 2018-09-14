@@ -39,6 +39,8 @@ class Start extends Component {
               )
             })
           }
+          <p className="help">Click to select</p>
+          <p className="help">Click on selected to change direction</p>
         </div>
         <StartBoard selectCell={this.updateShips} ships={this.props.ships} />
         <a href="" onClick={this.start}>Start game</a>
