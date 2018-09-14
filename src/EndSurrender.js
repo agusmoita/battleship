@@ -4,7 +4,7 @@ import End from './End';
 const EndSurrender = () => {
     return (
         <End>
-            <h1>Surrender</h1>
+            <h1>You have surrendered</h1>
         </End>
     )
 }

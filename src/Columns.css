@@ -1,0 +1,12 @@
+.Columns {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    height: 40px;
+    width: 400px;
+    position: absolute;
+    top: -20px;
+}
+
+.number {
+    text-align: center;
+}

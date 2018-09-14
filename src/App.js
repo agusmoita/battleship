@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import './App.css';
 import Game from './Game';
-import EndWin from './EndWin';
-import EndLose from './EndLose';
+import EndWon from './EndWon';
+import EndLost from './EndLost';
 import EndSurrender from './EndSurrender';
 import Start from './Start';
 import ships from './ships';
@@ -22,7 +22,8 @@ class App extends Component {
           ...s,
           cells: s.cells.map(c => {
             return {
-              ...c,
+              row: null,
+              col: null,
               hit: false
             }
           }),
@@ -63,7 +64,11 @@ class App extends Component {
         hit: false
       }
       valid[index] = allCells.every(c => {
-        return (c.row !== coords[index].row || c.col !== coords[index].col);
+        return (
+          (c.row !== coords[index].row || c.col !== coords[index].col)
+          &&
+          (coords[index].row <= 9 && coords[index].col <= 9)
+        );
       })
     }
     if (valid.every(v => v)) {
@@ -87,8 +92,8 @@ class App extends Component {
           <Route path="/play" render={(props) => (
             <Game {...props} ships={this.state.ships} />
           )} />
-          <Route path="/win" component={EndWin} />
-          <Route path="/lose" component={EndLose} />
+          <Route path="/won" component={EndWon} />
+          <Route path="/lost" component={EndLost} />
           <Route path="/surrender" component={EndSurrender} />
         </Switch>
       </div>

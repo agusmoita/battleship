@@ -1,12 +1,12 @@
 import React from 'react';
 import End from './End';
 
-const EndWin = () => {
+const EndLost = () => {
     return (
         <End>
-            <h1>You Win</h1>
+            <h1>You lost</h1>
         </End>
     )
 }
 
-export default EndWin;
+export default EndLost;

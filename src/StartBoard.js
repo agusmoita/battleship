@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import './Board.css';
 import Cell from './Cell';
+import Columns from './Columns';
+import Rows from "./Rows";
 
 export default class StartBoard extends Component {
     state = {
@@ -57,22 +59,26 @@ export default class StartBoard extends Component {
             <div className="Board-Container">
                 <h3>Place ships</h3>
                 <div className="Board">
+                    <Columns />
+                    <Rows />
+                    <div className="Board-Cells">
                     {
                         this.state.cells.map((row, i) => {
                             return row.map((cell, col) => {
                                 return (
                                     <Cell
-                                        key={`${i} ${col}`}
-                                        row={i}
-                                        col={col}
-                                        data={cell}
+                                    key={`${i} ${col}`}
+                                    row={i}
+                                    col={col}
+                                    data={cell}
                                         player
                                         handle={this.handleClick}
-                                    />
-                                )
-                            })
-                        })
-                    }
+                                        />
+                                        )
+                                    })
+                                })
+                            }
+                            </div>
                 </div>
             </div>
         );

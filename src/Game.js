@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import './Game.css';
 import PlayerBoard from './PlayerBoard'
 import EnemyBoard from './EnemyBoard'
@@ -8,7 +7,7 @@ class Game extends Component {
     state = {
         myTurn: true,
         playing: true,
-        win: null
+        win: false
     }
     
     changeTurn = () => {
@@ -21,18 +20,26 @@ class Game extends Component {
             playing: false,
             win
         })
-        this.props.history.push(win ? '/win' : '/lose')
+        this.props.history.push(win ? '/won' : '/lost');
+    }
+    surrender = (e) => {
+        e.preventDefault()
+        this.setState({
+            playing: false,
+            win: false
+        })
+        this.props.history.push('/surrender');
     }
     render() {
       return (
         <div className="Game">
-            <h1>Turno de { this.state.myTurn ? 'Jugador' : 'CPU' }</h1>
+            <h1>Playing: { this.state.myTurn ? 'Player' : 'CPU' }</h1>
             <div className="Boards">
                 <PlayerBoard myTurn={this.state.myTurn} selectCell={this.changeTurn} finish={this.finishGame} ships={this.props.ships} />
                 <EnemyBoard myTurn={!this.state.myTurn} selectCell={this.changeTurn} finish={this.finishGame} />
             </div>
             <div className="center">
-                <Link to="/surrender">Rendirse</Link>
+                <a href="" onClick={this.surrender}>Surrender</a>
             </div>
         </div>
       );

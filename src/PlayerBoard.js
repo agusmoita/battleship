@@ -2,6 +2,9 @@ import React, { Component } from "react";
 import _ from 'lodash';
 import './Board.css';
 import Cell from './Cell';
+import LastShot from "./LastShot";
+import Columns from './Columns';
+import Rows from './Rows';
 
 export default class PlayerBoard extends Component {
     state = {
@@ -17,7 +20,7 @@ export default class PlayerBoard extends Component {
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ],
-        lastHit: null,
+        lastShot: null,
         ships: []
     }
     componentDidMount() {
@@ -30,13 +33,13 @@ export default class PlayerBoard extends Component {
             })
         })
         this.setState({
-            lastHit: null,
+            lastShot: null,
             cells,
             ships
         })
     }
     sleep() {
-        return new Promise(resolve => setTimeout(resolve, 300));
+        return new Promise(resolve => setTimeout(resolve, 500));
     }
     componentDidUpdate(prevProps) {
         if (this.props.myTurn !== prevProps.myTurn && this.props.myTurn === false) {
@@ -74,7 +77,7 @@ export default class PlayerBoard extends Component {
                 if (cell === 0) {
                     cells[row][col] = 2;
                     this.setState({
-                        lastHit: 'water',
+                        lastShot: 'water',
                         cells
                     })
                 } else {
@@ -90,11 +93,11 @@ export default class PlayerBoard extends Component {
                     let last = 'hit'
                     if (_.every(ship.cells, 'hit')) {
                         ship.destroyed = true
-                        last = 'destroyed'
+                        last = 'ship destroyed'
                     }
 
                     this.setState({
-                        lastHit: last,
+                        lastShot: last,
                         ships: ships.map(s =>
                             (s.id === ship.id) ?
                             ship :
@@ -111,8 +114,11 @@ export default class PlayerBoard extends Component {
     render() {
         return (
             <div>
-                <h3>Player Board</h3>
-                <div className="Board"> 
+                <h3>My Ships</h3>
+                <div className="Board">
+                <Columns />
+                    <Rows />
+                    <div className="Board-Cells">
                 {
                     this.state.cells.map((row, i) => {
                         return row.map((cell, col) => {
@@ -130,7 +136,9 @@ export default class PlayerBoard extends Component {
                     })
                 }
                 </div>
-                <div className="center lastHit">{ this.state.lastHit }</div>
+                </div>
+
+                <LastShot shot={this.state.lastShot} />
             </div>
         );
     }

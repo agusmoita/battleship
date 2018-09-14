@@ -1,0 +1,13 @@
+.Rows {
+    display: grid;
+    grid-template-rows: repeat(10, 1fr);
+    height: 400px;
+    width: 40px;
+    position: absolute;
+    top: 14px;
+    left: -20px;
+}
+
+.letter {
+    vertical-align: middle;
+}

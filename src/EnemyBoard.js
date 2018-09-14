@@ -3,6 +3,9 @@ import _ from 'lodash';
 import './Board.css';
 import Cell from './Cell';
 import shipsTemplate from './ships';
+import LastShot from "./LastShot";
+import Columns from "./Columns";
+import Rows from "./Rows";
 
 export default class EnemyBoard extends Component {
     state = {
@@ -18,7 +21,7 @@ export default class EnemyBoard extends Component {
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ],
-        lastHit: null,
+        lastShot: null,
         ships: []
     }
     componentDidCatch() {
@@ -45,11 +48,15 @@ export default class EnemyBoard extends Component {
                     hit: false
                 }
                 valid[index] = allCells.every(c => {
-                    return (c.row !== coords[index].row || c.col !== coords[index].col);
+                    return (
+                        (c.row !== coords[index].row || c.col !== coords[index].col)
+                        &&
+                        (coords[index].row <= 9 && coords[index].col <= 9)
+                    );
                 })
-                if (valid[index]) {
-                    valid[index] = (coords[index].row <= 9 && coords[index].col <= 9)
-                }
+                // if (valid[index]) {
+                //     valid[index] = 
+                // }
             }
             if (valid.every(v => v)) {
                 ship.cells = coords
@@ -76,7 +83,7 @@ export default class EnemyBoard extends Component {
             })
         })
         this.setState({
-            lastHit: null,
+            lastShot: null,
             cells,
             ships
         })
@@ -112,7 +119,7 @@ export default class EnemyBoard extends Component {
                 if (cell === 0) {
                     cells[row][col] = 2;
                     this.setState({
-                        lastHit: 'water',
+                        lastShot: 'water',
                         cells
                     })
                 } else {
@@ -128,11 +135,11 @@ export default class EnemyBoard extends Component {
                     let last = 'hit'
                     if (_.every(ship.cells, 'hit')) {
                         ship.destroyed = true
-                        last = 'destroyed'
+                        last = 'ship destroyed'
                     }
 
                     this.setState({
-                        lastHit: last,
+                        lastShot: last,
                         ships: ships.map(s =>
                             (s.id === ship.id) ?
                             ship :
@@ -149,25 +156,29 @@ export default class EnemyBoard extends Component {
     render() {
         return (
             <div>
-                <h3>CPU Board</h3>
-                <div className="Board"> 
-                {
-                    this.state.cells.map((row, i) => {
-                        return row.map((cell, col) => {
-                            return ( 
-                                <Cell 
-                                key={`${i} ${col}`}
-                                row={i}
-                                col={col}
-                                data={cell}
-                                handle={this.handleClick}
-                                />
-                                )
+                <h3>Enemy Ships</h3>
+                <div className="Board">
+                <Columns />
+                    <Rows />
+                    <div className="Board-Cells">
+                    {
+                        this.state.cells.map((row, i) => {
+                            return row.map((cell, col) => {
+                                return ( 
+                                    <Cell 
+                                    key={`${i} ${col}`}
+                                    row={i}
+                                    col={col}
+                                    data={cell}
+                                    handle={this.handleClick}
+                                    />
+                                    )
+                                })
                             })
-                        })
-                    } 
+                        }
+                        </div>
                 </div>
-                <div className="center lastHit"> { this.state.lastHit } </div>
+                <LastShot shot={this.state.lastShot} />
             </div>
         );
     }

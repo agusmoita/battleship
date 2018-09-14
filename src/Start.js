@@ -41,7 +41,7 @@ class Start extends Component {
                     }
                 </div>
                 <StartBoard selectCell={this.updateShips} ships={this.props.ships} />
-                <a href="" onClick={this.start}>Start</a>
+                <a href="" onClick={this.start}>Start game</a>
             </div>
         )
     }
