@@ -54,7 +54,7 @@ export default class StartBoard extends Component {
     }
     render() {
         return (
-            <div>
+            <div className="Board-Container">
                 <h3>Place ships</h3>
                 <div className="Board">
                     {

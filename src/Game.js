@@ -31,7 +31,9 @@ class Game extends Component {
                 <PlayerBoard myTurn={this.state.myTurn} selectCell={this.changeTurn} finish={this.finishGame} ships={this.props.ships} />
                 <EnemyBoard myTurn={!this.state.myTurn} selectCell={this.changeTurn} finish={this.finishGame} />
             </div>
-            <Link to="/surrender">Rendirse</Link>
+            <div className="center">
+                <Link to="/surrender">Rendirse</Link>
+            </div>
         </div>
       );
     }

@@ -4,7 +4,7 @@ import End from './End';
 const EndWin = () => {
     return (
         <End>
-            <h1>Win</h1>
+            <h1>You Win</h1>
         </End>
     )
 }

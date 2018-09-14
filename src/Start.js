@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import _ from 'lodash';
 import StartBoard from './StartBoard';
 import Ship from './Ship';
+import './Start.css';
 
 class Start extends Component {
     componentDidMount() {
@@ -23,8 +24,8 @@ class Start extends Component {
     }
     render() {
         return (
-            <div>
-                <div>
+            <div className="Start">
+                <div className="Ships">
                     {
                         this.props.ships.map(s => {
                             const isCurrent = this.props.current === s.id
@@ -40,7 +41,7 @@ class Start extends Component {
                     }
                 </div>
                 <StartBoard selectCell={this.updateShips} ships={this.props.ships} />
-                <a href="" onClick={this.start}>Iniciar</a>
+                <a href="" onClick={this.start}>Start</a>
             </div>
         )
     }

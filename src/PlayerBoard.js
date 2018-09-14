@@ -130,7 +130,7 @@ export default class PlayerBoard extends Component {
                     })
                 }
                 </div>
-                <div>{ this.state.lastHit }</div>
+                <div className="center lastHit">{ this.state.lastHit }</div>
             </div>
         );
     }

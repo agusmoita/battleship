@@ -25,7 +25,7 @@ const ships = [
     {
         id: 2,
         length: 3,
-        direction: 'vertical',
+        direction: 'horizontal',
         cells: [
             {
                 row: null,

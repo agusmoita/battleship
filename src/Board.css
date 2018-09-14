@@ -6,3 +6,13 @@
     width: 400px;
     border: 1px solid black;
 }
+
+.Board-Container {
+    margin: 0 20px;
+}
+
+.lastHit {
+    margin-top: 15px;
+    font-weight: bold;
+    font-size: 2em;
+}

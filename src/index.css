@@ -12,3 +12,7 @@ a {
   border: whitesmoke;
   border-radius: 3px;
 }
+
+.center {
+  text-align: center;
+}

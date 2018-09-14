@@ -167,7 +167,7 @@ export default class EnemyBoard extends Component {
                         })
                     } 
                 </div>
-                < div> { this.state.lastHit } </div>
+                <div className="center lastHit"> { this.state.lastHit } </div>
             </div>
         );
     }

@@ -1,11 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import './End.css'
 
 const End = (props) => {
     return (
-        <div>
+        <div className="End center">
             { props.children }
-            <Link to="/">Volver</Link>
+            <Link to="/">Play again</Link>
         </div>
     )
 }
