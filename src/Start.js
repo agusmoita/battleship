@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from "react-router-dom";
+import _ from 'lodash';
 import StartBoard from './StartBoard';
 import Ship from './Ship';
 
@@ -12,6 +12,14 @@ class Start extends Component {
     }
     change = (id) => {
         this.props.change(id)
+    }
+    start = (e) => {
+        e.preventDefault()
+        const allCells = _.flattenDepth(this.props.ships.map(s => s.cells))
+        const valid = allCells.every(c => {
+            return c.row !== null && c.col !== null
+        })
+        if (valid) this.props.history.push('/play')
     }
     render() {
         return (
@@ -32,7 +40,7 @@ class Start extends Component {
                     }
                 </div>
                 <StartBoard selectCell={this.updateShips} ships={this.props.ships} />
-                <Link to="/play">Iniciar</Link>
+                <a href="" onClick={this.start}>Iniciar</a>
             </div>
         )
     }

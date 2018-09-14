@@ -15,7 +15,6 @@ class App extends Component {
     ships
   }
   restart = () => {
-    console.log('hhh')
     this.setState({
       currentShip: 1,
       ships: this.state.ships.map(s => {
