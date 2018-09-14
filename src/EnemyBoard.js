@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import _ from 'lodash';
 import './Board.css';
 import Cell from './Cell';
+import shipsTemplate from './ships';
 
 export default class EnemyBoard extends Component {
     state = {
@@ -18,57 +19,68 @@ export default class EnemyBoard extends Component {
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ],
         lastHit: null,
-        ships: [{
-                id: 1,
-                length: 3,
-                direction: 'horizontal',
-                cells: [{
-                        row: 0,
-                        col: 0,
-                        hit: false
-                    },
-                    {
-                        row: 0,
-                        col: 1,
-                        hit: false
-                    },
-                    {
-                        row: 0,
-                        col: 2,
-                        hit: false
-                    },
-                ],
-                destroyed: false
-            },
-            {
-                id: 2,
-                length: 3,
-                direction: 'vertical',
-                cells: [{
-                        row: 3,
-                        col: 7,
-                        hit: false
-                    },
-                    {
-                        row: 4,
-                        col: 7,
-                        hit: false
-                    },
-                    {
-                        row: 5,
-                        col: 7,
-                        hit: false
-                    },
-                ],
-                destroyed: false
-            }
-        ]
+        ships: []
     }
     componentDidCatch() {
         this.props.history.push('/')
     }
+    initShips = () => {
+        const ships = shipsTemplate
+        const shipsCount = ships.length
+        let i = 0;
+        while (i < shipsCount) {
+            let valid = [];
+            const ship = ships[i];    
+            const row = _.random(0, 9);
+            const col = _.random(0, 9);
+            const otherShips = ships.filter(s => s.id !== ship.id)
+            const allCells = _.flattenDepth(otherShips.map(s => s.cells))
+            let coords = [];
+            const { length } = ship;
+            const direction = _.sample(['horizontal', 'vertical'])
+            for (let index = 0; index < length; index++) {
+                coords[index] = {
+                    row: (direction === 'horizontal' ? row : row + index),
+                    col: (direction === 'vertical' ? col : col + index),
+                    hit: false
+                }
+                valid[index] = allCells.every(c => {
+                    return (c.row !== coords[index].row || c.col !== coords[index].col);
+                })
+                if (valid[index]) {
+                    valid[index] = (coords[index].row <= 9 && coords[index].col <= 9)
+                }
+            }
+            if (valid.every(v => v)) {
+                ship.cells = coords
+                ship.direction = direction
+                ship.destroyed = false
+                ships[i] = ship
+                i += 1
+            }
+        }
+        this.setState({
+            ships: ships
+        })
+
+        return ships;
+
+    }
     componentDidMount() {
-        this.updateBoard()
+        const ships = this.initShips();
+        const cells = this.state.cells;
+        ships.forEach((ship) => {
+            ship.cells.forEach((cell) => {
+                let fill = 1;
+                cells[cell.row][cell.col] = fill
+            })
+        })
+        this.setState({
+            lastHit: null,
+            cells,
+            ships
+        })
+        // this.updateBoard()
     }
     sleep() {
         return new Promise(resolve => setTimeout(resolve, 300));
