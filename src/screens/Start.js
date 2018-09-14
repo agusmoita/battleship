@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
-import StartBoard from './StartBoard';
-import Ship from './Ship';
+import StartBoard from '../components/StartBoard';
+import Ship from '../components/Ship';
 import './Start.css';
 
 class Start extends Component {

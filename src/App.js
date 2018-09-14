@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import './App.css';
-import Game from './Game';
-import EndWon from './EndWon';
-import EndLost from './EndLost';
-import EndSurrender from './EndSurrender';
-import Start from './Start';
-import ships from './ships';
+import Game from './screens/Game';
+import EndWon from './screens/EndWon';
+import EndLost from './screens/EndLost';
+import EndSurrender from './screens/EndSurrender';
+import Start from './screens/Start';
+import ships from './util/ships';
 import _ from 'lodash';
 
 class App extends Component {

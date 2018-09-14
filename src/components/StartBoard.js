@@ -3,6 +3,7 @@ import './Board.css';
 import Cell from './Cell';
 import Columns from './Columns';
 import Rows from "./Rows";
+import constants from '../util/constants';
 
 export default class StartBoard extends Component {
     state = {
@@ -44,7 +45,7 @@ export default class StartBoard extends Component {
         ships.forEach((ship) => {
             ship.cells.forEach((cell) => {
                 if (cell.row !== null && cell.row !== null)
-                    cells[cell.row][cell.col] = 1
+                    cells[cell.row][cell.col] = constants.DATA.SHIP;
             })
         })
         this.setState({
@@ -57,7 +58,7 @@ export default class StartBoard extends Component {
     render() {
         return (
             <div className="Board-Container">
-                <h3>Place ships</h3>
+                <h3>My Ships</h3>
                 <div className="Board">
                     <Columns />
                     <Rows />

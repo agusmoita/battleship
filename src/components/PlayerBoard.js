@@ -5,6 +5,7 @@ import Cell from './Cell';
 import LastShot from "./LastShot";
 import Columns from './Columns';
 import Rows from './Rows';
+import constants from '../util/constants';
 
 export default class PlayerBoard extends Component {
     state = {
@@ -28,8 +29,7 @@ export default class PlayerBoard extends Component {
         const cells = this.state.cells;
         ships.forEach((ship) => {
             ship.cells.forEach((cell) => {
-                let fill = 1;
-                cells[cell.row][cell.col] = fill
+                cells[cell.row][cell.col] = constants.DATA.SHIP;
             })
         })
         this.setState({
@@ -54,9 +54,9 @@ export default class PlayerBoard extends Component {
         ships.forEach((ship) => {
             const destroyed = ship.destroyed
             ship.cells.forEach((cell) => {
-                let fill = 1;
-                if (destroyed) fill = 4
-                else if (cell.hit) fill = 3
+                let fill = constants.DATA.SHIP;
+                if (destroyed) fill = constants.DATA.DESTROY
+                else if (cell.hit) fill = constants.DATA.HIT
                 cells[cell.row][cell.col] = fill
             })
         })
@@ -71,13 +71,13 @@ export default class PlayerBoard extends Component {
         if (!this.props.myTurn) {
             const cells = this.state.cells;
             const cell = cells[row][col];
-            if (cell >= 2) {
+            if (cell >= constants.DATA.WATER) {
                 this.handleClick(_.random(0, 9), _.random(0, 9))
             } else {
-                if (cell === 0) {
-                    cells[row][col] = 2;
+                if (cell === constants.DATA.BLANK) {
+                    cells[row][col] = constants.DATA.WATER;
                     this.setState({
-                        lastShot: 'water',
+                        lastShot: constants.SHOT.WATER,
                         cells
                     })
                 } else {
@@ -90,10 +90,10 @@ export default class PlayerBoard extends Component {
                     ship.cells.find(c => {
                         return c.row === row && c.col === col
                     }).hit = true
-                    let last = 'hit'
+                    let last = constants.SHOT.HIT
                     if (_.every(ship.cells, 'hit')) {
                         ship.destroyed = true
-                        last = 'ship destroyed'
+                        last = constants.SHOT.DESTROY
                     }
 
                     this.setState({

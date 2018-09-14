@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './Game.css';
-import PlayerBoard from './PlayerBoard'
-import EnemyBoard from './EnemyBoard'
+import PlayerBoard from '../components/PlayerBoard'
+import EnemyBoard from '../components/EnemyBoard'
 
 class Game extends Component {
     state = {

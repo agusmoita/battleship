@@ -1,22 +1,24 @@
 import React, { Component } from "react";
 import './Cell.css';
+import constants from '../util/constants';
 
 export default class Cell extends Component {
     render() {
         const { data, handle, row, col} = this.props;
-        let fill = '';
+        const { DATA, FILL } = constants
+        let fill = FILL.BLANK;
         switch (data) {
-            case 1:
-                if (this.props.player) fill = 'ship';
+            case DATA.SHIP:
+                if (this.props.player) fill = FILL.SHIP;
                 break;
-            case 2:
-                fill = 'water';
+            case DATA.WATER:
+                fill = FILL.WATER;
                 break;
-            case 3:
-                fill = 'hit';
+            case DATA.HIT:
+                fill = FILL.HIT;
                 break;
-            case 4:
-                fill = 'destroy';
+            case DATA.DESTROY:
+                fill = FILL.DESTROY;
                 break;
         
             default:
