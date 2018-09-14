@@ -14,6 +14,24 @@ class App extends Component {
     currentShip: 1,
     ships
   }
+  restart = () => {
+    console.log('hhh')
+    this.setState({
+      currentShip: 1,
+      ships: this.state.ships.map(s => {
+        return {
+          ...s,
+          cells: s.cells.map(c => {
+            return {
+              ...c,
+              hit: false
+            }
+          }),
+          destroyed: false
+        }
+      })
+    })
+  }
   changeCurrentShip = (id) => {
     if (id === this.state.currentShip) {
       this.setState({
@@ -65,7 +83,7 @@ class App extends Component {
       <div className="App">
         <Switch>
           <Route path="/" exact render={(props) => (
-            <Start {...props} call={this.updateShips} ships={this.state.ships} current={this.state.currentShip} change={this.changeCurrentShip}/>
+            <Start {...props} restart={this.restart} call={this.updateShips} ships={this.state.ships} current={this.state.currentShip} change={this.changeCurrentShip}/>
           )} />
           <Route path="/play" render={(props) => (
             <Game {...props} ships={this.state.ships} />

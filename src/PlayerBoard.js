@@ -17,10 +17,23 @@ export default class PlayerBoard extends Component {
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ],
-        ships: this.props.ships
+        lastHit: null,
+        ships: []
     }
     componentDidMount() {
-        this.updateBoard()
+        const ships = this.props.ships;
+        const cells = this.state.cells;
+        ships.forEach((ship) => {
+            ship.cells.forEach((cell) => {
+                let fill = 1;
+                cells[cell.row][cell.col] = fill
+            })
+        })
+        this.setState({
+            lastHit: null,
+            cells,
+            ships
+        })
     }
     sleep() {
         return new Promise(resolve => setTimeout(resolve, 300));
@@ -61,6 +74,7 @@ export default class PlayerBoard extends Component {
                 if (cell === 0) {
                     cells[row][col] = 2;
                     this.setState({
+                        lastHit: 'water',
                         cells
                     })
                 } else {
@@ -73,11 +87,14 @@ export default class PlayerBoard extends Component {
                     ship.cells.find(c => {
                         return c.row === row && c.col === col
                     }).hit = true
+                    let last = 'hit'
                     if (_.every(ship.cells, 'hit')) {
                         ship.destroyed = true
+                        last = 'destroyed'
                     }
 
                     this.setState({
+                        lastHit: last,
                         ships: ships.map(s =>
                             (s.id === ship.id) ?
                             ship :
@@ -111,8 +128,9 @@ export default class PlayerBoard extends Component {
                                 )
                         })
                     })
-                } 
+                }
                 </div>
+                <div>{ this.state.lastHit }</div>
             </div>
         );
     }

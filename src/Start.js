@@ -4,6 +4,9 @@ import StartBoard from './StartBoard';
 import Ship from './Ship';
 
 class Start extends Component {
+    componentDidMount() {
+        this.props.restart()
+    }
     updateShips = (row, col) => {
         this.props.call(row,col)
     }

@@ -10,6 +10,7 @@ class Game extends Component {
         playing: true,
         win: null
     }
+    
     changeTurn = () => {
         this.setState({
             myTurn: !this.state.myTurn

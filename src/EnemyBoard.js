@@ -17,6 +17,7 @@ export default class EnemyBoard extends Component {
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ],
+        lastHit: null,
         ships: [{
                 id: 1,
                 length: 3,
@@ -63,6 +64,9 @@ export default class EnemyBoard extends Component {
             }
         ]
     }
+    componentDidCatch() {
+        this.props.history.push('/')
+    }
     componentDidMount() {
         this.updateBoard()
     }
@@ -96,6 +100,7 @@ export default class EnemyBoard extends Component {
                 if (cell === 0) {
                     cells[row][col] = 2;
                     this.setState({
+                        lastHit: 'water',
                         cells
                     })
                 } else {
@@ -108,11 +113,14 @@ export default class EnemyBoard extends Component {
                     ship.cells.find(c => {
                         return c.row === row && c.col === col
                     }).hit = true
+                    let last = 'hit'
                     if (_.every(ship.cells, 'hit')) {
                         ship.destroyed = true
+                        last = 'destroyed'
                     }
 
                     this.setState({
+                        lastHit: last,
                         ships: ships.map(s =>
                             (s.id === ship.id) ?
                             ship :
@@ -147,6 +155,7 @@ export default class EnemyBoard extends Component {
                         })
                     } 
                 </div>
+                < div> { this.state.lastHit } </div>
             </div>
         );
     }
