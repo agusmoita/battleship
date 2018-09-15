@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import _ from 'lodash';
 import './Board.css';
-import Cell from './Cell';
+import Block from './Block';
 import shipsTemplate from '../util/ships';
 import LastShot from "./LastShot";
 import Columns from "./Columns";
@@ -10,7 +10,7 @@ import constants from '../util/constants';
 
 export default class EnemyBoard extends Component {
   state = {
-    cells: [
+    blocks: [
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -25,10 +25,19 @@ export default class EnemyBoard extends Component {
     lastShot: null,
     ships: []
   }
-  componentDidCatch() {
-    this.props.history.push('/')
+  getOtherShipsBlocks = (ships, currentShip) => {
+    const otherShips = ships.filter(ship => ship.id !== currentShip)
+    return _.flattenDepth(otherShips.map(ship => ship.blocks))
   }
-  initShips = () => {
+  canPlaceInCoords = (ships, ship, row, col) => {
+    return this.getOtherShipsBlocks(ships, ship.id).every(block => {
+      return (
+        (block.row !== row || block.col !== col) &&
+        (row <= (constants.BOARD_SIZE - 1) && col <= (constants.BOARD_SIZE - 1))
+      );
+    })
+  }
+  placeShips = () => {
     const ships = shipsTemplate
     const shipsCount = ships.length
     let i = 0;
@@ -37,8 +46,6 @@ export default class EnemyBoard extends Component {
       const ship = ships[i];    
       const row = _.random(0, 9);
       const col = _.random(0, 9);
-      const otherShips = ships.filter(s => s.id !== ship.id)
-      const allCells = _.flattenDepth(otherShips.map(s => s.cells))
       let coords = [];
       const { length } = ship;
       const direction = _.sample(['horizontal', 'vertical'])
@@ -48,16 +55,10 @@ export default class EnemyBoard extends Component {
           col: (direction === 'vertical' ? col : col + index),
           hit: false
         }
-        valid[index] = allCells.every(c => {
-          return (
-            (c.row !== coords[index].row || c.col !== coords[index].col)
-            &&
-            (coords[index].row <= 9 && coords[index].col <= 9)
-          );
-        })
+        valid[index] = this.canPlaceInCoords(ships, ship, coords[index].row, coords[index].col)
       }
       if (valid.every(v => v)) {
-        ship.cells = coords
+        ship.blocks = coords
         ship.direction = direction
         ship.destroyed = false
         ships[i] = ship
@@ -71,64 +72,61 @@ export default class EnemyBoard extends Component {
     return ships;
   }
   componentDidMount() {
-    const ships = this.initShips();
-    const cells = this.state.cells;
+    const ships = this.placeShips();
+    const blocks = this.state.blocks;
     ships.forEach((ship) => {
-      ship.cells.forEach((cell) => {
-        cells[cell.row][cell.col] = constants.DATA.SHIP;
+      ship.blocks.forEach((block) => {
+        blocks[block.row][block.col] = constants.DATA.SHIP;
       })
     })
     this.setState({
       lastShot: null,
-      cells,
+      blocks,
       ships
     })
   }
-  sleep() {
-    return new Promise(resolve => setTimeout(resolve, 300));
-  }
   updateBoard = () => {
     const ships = this.state.ships;
-    const cells = this.state.cells;
+    const blocks = this.state.blocks;
     ships.forEach((ship) => {
       const destroyed = ship.destroyed
-      ship.cells.forEach((cell) => {
+      ship.blocks.forEach((block) => {
         let fill = constants.DATA.SHIP;
         if (destroyed) fill = constants.DATA.DESTROY;
-        else if (cell.hit) fill = constants.DATA.HIT;
-        cells[cell.row][cell.col] = fill
+        else if (block.hit) fill = constants.DATA.HIT;
+        blocks[block.row][block.col] = fill
       })
     })
     this.setState({
-      cells
+      blocks
     })
-    if (_.every(ships, 'destroyed')) {
+    if (ships.every(ship => ship.destroyed)) {
       this.props.finish(true)
     }
   }
-  handleClick = (row, col) => {
+  shoot = (row, col) => {
     if (!this.props.myTurn) {
-      const cells = this.state.cells;
-      const cell = cells[row][col];
-      if (cell < constants.DATA.WATER) {
-        if (cell === constants.DATA.BLANK) {
-          cells[row][col] = constants.DATA.WATER;
+      const blocks = this.state.blocks;
+      const block = blocks[row][col];
+      if (block < constants.DATA.WATER) {
+        if (block === constants.DATA.BLANK) {
+          blocks[row][col] = constants.DATA.WATER;
           this.setState({
             lastShot: constants.SHOT.WATER,
-            cells
+            blocks
           })
         } else {
           const ships = this.state.ships;
           const ship = ships.find(s => {
-            return (s.cells.find(c => {
+            return (s.blocks.find(c => {
               return c.row === row && c.col === col
             }) !== undefined)
           })
-          ship.cells.find(c => {
+          ship.blocks.find(c => {
             return c.row === row && c.col === col
           }).hit = true
           let last = constants.SHOT.HIT
-          if (_.every(ship.cells, 'hit')) {
+          if (_.every(ship.blocks, 'hit')) {
             ship.destroyed = true
             last = constants.SHOT.DESTROY
           }
@@ -143,7 +141,7 @@ export default class EnemyBoard extends Component {
 
           this.updateBoard()
         }
-        this.props.selectCell()
+        this.props.clickOnBlock()
       }
     }
   }
@@ -154,17 +152,17 @@ export default class EnemyBoard extends Component {
         <div className="Board">
           <Columns />
           <Rows />
-          <div className="Board-Cells">
+          <div className="Board-Blocks">
             {
-              this.state.cells.map((row, i) => {
-                return row.map((cell, col) => {
+              this.state.blocks.map((row, i) => {
+                return row.map((block, col) => {
                   return ( 
-                    <Cell 
+                    <Block 
                       key={`${i} ${col}`}
                       row={i}
                       col={col}
-                      data={cell}
-                      handle={this.handleClick}
+                      data={block}
+                      handleClick={this.shoot}
                     />
                   )
                 })

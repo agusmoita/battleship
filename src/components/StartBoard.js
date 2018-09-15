@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import './Board.css';
-import Cell from './Cell';
+import Block from './Block';
 import Columns from './Columns';
 import Rows from "./Rows";
 import constants from '../util/constants';
 
 export default class StartBoard extends Component {
   state = {
-    cells: [
+    blocks: [
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -29,7 +29,7 @@ export default class StartBoard extends Component {
     }
   }
   updateBoard = () => {
-    const cells = [
+    const blocks = [
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -43,17 +43,17 @@ export default class StartBoard extends Component {
     ]
     const ships = this.props.ships;
     ships.forEach((ship) => {
-      ship.cells.forEach((cell) => {
-        if (cell.row !== null && cell.row !== null)
-          cells[cell.row][cell.col] = constants.DATA.SHIP;
+      ship.blocks.forEach((block) => {
+        if (block.row !== null && block.row !== null)
+          blocks[block.row][block.col] = constants.DATA.SHIP;
       })
     })
     this.setState({
-      cells
+      blocks
     })
   }
   handleClick = (row, col) => {
-    this.props.selectCell(row, col)
+    this.props.clickOnBlock(row, col)
   }
   render() {
     return (
@@ -62,18 +62,18 @@ export default class StartBoard extends Component {
         <div className="Board">
           <Columns />
           <Rows />
-          <div className="Board-Cells">
+          <div className="Board-Blocks">
             {
-              this.state.cells.map((row, i) => {
-                return row.map((cell, col) => {
+              this.state.blocks.map((row, i) => {
+                return row.map((block, col) => {
                   return (
-                    <Cell
+                    <Block
                       key={`${i} ${col}`}
                       row={i}
                       col={col}
-                      data={cell}
+                      data={block}
                       player
-                      handle={this.handleClick}
+                      handleClick={this.handleClick}
                     />
                   )
                 })

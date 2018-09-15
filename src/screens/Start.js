@@ -9,8 +9,8 @@ class Start extends Component {
   componentDidMount() {
     this.props.restart()
   }
-  updateShips = (row, col) => {
-    this.props.call(row,col)
+  placeShip = (row, col) => {
+    this.props.place(row,col)
   }
   change = (id) => {
     this.props.change(id)
@@ -18,16 +18,18 @@ class Start extends Component {
   setRef = (element) => {
     this.nameInput = element;
   }
-  start = (e) => {
+  allShipsPlaced = () => {
+    return _.flattenDepth(this.props.ships.map(ship => ship.blocks))
+      .every(block => {
+        return block.row !== null && block.col !== null
+      })
+  }
+  startGame = (e) => {
     e.preventDefault()
     const name = this.nameInput ? this.nameInput.value : null;
     if (name) {
       this.props.setName(name)
-      const allCells = _.flattenDepth(this.props.ships.map(s => s.cells))
-      const valid = allCells.every(c => {
-        return c.row !== null && c.col !== null
-      })
-      if (valid) this.props.history.push('/play')
+      if (this.allShipsPlaced()) this.props.history.push('/play')
     }
     else {
       this.nameInput.focus()
@@ -42,25 +44,25 @@ class Start extends Component {
         <div className="content">
           <div className="Ships">
             {
-              this.props.ships.map(s => {
-                const isCurrent = this.props.current === s.id
+              this.props.ships.map(ship => {
+                const isCurrent = this.props.current === ship.id
                 return (
                   <Ship 
-                  key={s.id} 
-                  ship={s}
-                  change={this.change}
-                  current={isCurrent}
+                    key={ship.id} 
+                    ship={ship}
+                    select={this.change}
+                    current={isCurrent}
                   />
-                  )
-                })
-              }
+                )
+              })
+            }
             <p className="help">Click to select</p>
             <p className="help">Click on selected to change direction</p>
           </div>
-          <StartBoard selectCell={this.updateShips} ships={this.props.ships} />
+          <StartBoard clickOnBlock={this.placeShip} ships={this.props.ships} />
         </div>
         <div className="center">
-          <a href="" onClick={this.start}>Start game</a>
+          <a href="" onClick={this.startGame}>Start game</a>
         </div>
       </div>
     )

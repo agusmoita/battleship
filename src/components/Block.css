@@ -1,19 +1,19 @@
-.Cell {
+.Block {
     border: 1px solid black;
 }
 
-.Cell.ship {
+.Block.ship {
     background-color: black;
 }
 
-.Cell.water {
+.Block.water {
     background-color: aqua;
 }
 
-.Cell.hit {
+.Block.hit {
     background-color: red;
 }
 
-.Cell.destroy {
+.Block.destroy {
     background-color: orange;
 }

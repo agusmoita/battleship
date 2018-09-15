@@ -9,7 +9,6 @@ class Game extends Component {
     playing: true,
     win: false
   }
-  
   changeTurn = () => {
     this.setState({
       myTurn: !this.state.myTurn
@@ -35,8 +34,8 @@ class Game extends Component {
       <div className="Game">
         <h1>Playing: { this.state.myTurn ? this.props.player : 'CPU' }</h1>
         <div className="Boards">
-          <PlayerBoard myTurn={this.state.myTurn} selectCell={this.changeTurn} finish={this.finishGame} ships={this.props.ships} />
-          <EnemyBoard myTurn={!this.state.myTurn} selectCell={this.changeTurn} finish={this.finishGame} />
+          <PlayerBoard myTurn={this.state.myTurn} clickOnBlock={this.changeTurn} finish={this.finishGame} ships={this.props.ships} />
+          <EnemyBoard myTurn={!this.state.myTurn} clickOnBlock={this.changeTurn} finish={this.finishGame} />
         </div>
         <div className="center">
           <a href="" onClick={this.surrender}>Surrender</a>

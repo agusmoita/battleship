@@ -17,7 +17,7 @@
     flex-direction: column;
 }
 
-.Ship .Cell {
+.Ship .Block {
     width: 20px;
     height: 20px;
 }

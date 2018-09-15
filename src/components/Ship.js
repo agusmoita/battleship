@@ -1,26 +1,27 @@
 import React, { Component } from 'react';
 import './Ship.css'
-import Cell from './Cell';
+import Block from './Block';
+import constants from '../util/constants'
 
 class Ship extends Component {
-  change = () => {
-    this.props.change(this.props.ship.id)
+  handleClick = () => {
+    this.props.select(this.props.ship.id)
   }
   render() {
     const { ship } = this.props
     const isCurrent = this.props.current ? 'current' : ''
     return (
-      <div onClick={this.change} className={`Ship ${ship.direction} ${isCurrent}`}>
+      <div onClick={this.handleClick} className={`Ship ${ship.direction} ${isCurrent}`}>
         {
-          ship.cells.map((c, i) => {
+          ship.blocks.map((block, i) => {
             return (
-              <Cell 
+              <Block
                 key={`${ship.id} ${i}`}
-                data={1}
+                data={constants.DATA.SHIP}
+                row={block.row}
+                col={block.col}
                 player
-                row={c.row}
-                col={c.col}
-                handle={()=>{}}
+                handleClick={()=>{}}
               />
             )
           })

@@ -3,7 +3,7 @@ const ships = [
     id: 1,
     length: 3,
     direction: 'horizontal',
-    cells: [
+    blocks: [
       {
         row: null,
         col: null,
@@ -26,7 +26,7 @@ const ships = [
     id: 2,
     length: 3,
     direction: 'horizontal',
-    cells: [
+    blocks: [
       {
         row: null,
         col: null,
@@ -49,7 +49,7 @@ const ships = [
     id: 3,
     length: 3,
     direction: 'horizontal',
-    cells: [
+    blocks: [
       {
         row: null,
         col: null,
@@ -72,7 +72,7 @@ const ships = [
     id: 4,
     length: 2,
     direction: 'horizontal',
-    cells: [
+    blocks: [
       {
         row: null,
         col: null,
@@ -90,7 +90,7 @@ const ships = [
     id: 5,
     length: 4,
     direction: 'horizontal',
-    cells: [
+    blocks: [
       {
         row: null,
         col: null,

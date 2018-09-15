@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import _ from 'lodash';
 import './Board.css';
-import Cell from './Cell';
+import Block from './Block';
 import LastShot from "./LastShot";
 import Columns from './Columns';
 import Rows from './Rows';
@@ -9,7 +9,7 @@ import constants from '../util/constants';
 
 export default class PlayerBoard extends Component {
   state = {
-    cells: [
+    blocks: [
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -26,15 +26,15 @@ export default class PlayerBoard extends Component {
   }
   componentDidMount() {
     const ships = this.props.ships;
-    const cells = this.state.cells;
+    const blocks = this.state.blocks;
     ships.forEach((ship) => {
-      ship.cells.forEach((cell) => {
-        cells[cell.row][cell.col] = constants.DATA.SHIP;
+      ship.blocks.forEach((block) => {
+        blocks[block.row][block.col] = constants.DATA.SHIP;
       })
     })
     this.setState({
       lastShot: null,
-      cells,
+      blocks,
       ships
     })
   }
@@ -44,68 +44,75 @@ export default class PlayerBoard extends Component {
   componentDidUpdate(prevProps) {
     if (this.props.myTurn !== prevProps.myTurn && this.props.myTurn === false) {
       this.sleep().then(() => {
-        this.handleClick(_.random(0, 9), _.random(0, 9))
+        this.shoot(_.random(0, 9), _.random(0, 9))
       })
     }
   }
   updateBoard = () => {
     const ships = this.state.ships;
-    const cells = this.state.cells;
+    const blocks = this.state.blocks;
     ships.forEach((ship) => {
       const destroyed = ship.destroyed
-      ship.cells.forEach((cell) => {
+      ship.blocks.forEach((block) => {
         let fill = constants.DATA.SHIP;
         if (destroyed) fill = constants.DATA.DESTROY
-        else if (cell.hit) fill = constants.DATA.HIT
-        cells[cell.row][cell.col] = fill
+        else if (block.hit) fill = constants.DATA.HIT
+        blocks[block.row][block.col] = fill
       })
     })
     this.setState({
-      cells
+      blocks
     })
-    if (_.every(ships, 'destroyed')) {
+    if (ships.every(ship => ship.destroyed)) {
       this.props.finish(false)
     }
   }
-  handleClick = (row, col) => {
+  findShipBlock = (ship, row, col) => {
+    return ship.blocks.find(block => {
+      return block.row === row && block.col === col
+    })
+  }
+  shipAreIn = (ship, row, col) => {
+    return this.findShipBlock(ship, row, col) !== undefined
+  }
+  shoot = (row, col) => {
     if (!this.props.myTurn) {
-      const cells = this.state.cells;
-      const cell = cells[row][col];
-      if (cell >= constants.DATA.WATER) {
-        this.handleClick(_.random(0, 9), _.random(0, 9))
+      const blocks = this.state.blocks;
+      const block = blocks[row][col];
+      if (block >= constants.DATA.WATER) {
+        this.shoot(_.random(0, 9), _.random(0, 9))
       } else {
-        if (cell === constants.DATA.BLANK) {
-          cells[row][col] = constants.DATA.WATER;
+        if (block === constants.DATA.BLANK) {
+          blocks[row][col] = constants.DATA.WATER;
           this.setState({
             lastShot: constants.SHOT.WATER,
-            cells
+            blocks
           })
         } else {
           const ships = this.state.ships;
           const ship = ships.find(s => {
-            return (s.cells.find(c => {
-              return c.row === row && c.col === col
-            }) !== undefined)
+            return this.shipAreIn(s, row, col)
+            // return (s.blocks.find(b => {
+            //   return b.row === row && b.col === col
+            // }) !== undefined)
           })
-          ship.cells.find(c => {
-            return c.row === row && c.col === col
-          }).hit = true
+          this.findShipBlock(ship, row, col).hit = true
           let last = constants.SHOT.HIT
-          if (_.every(ship.cells, 'hit')) {
+          if (ship.blocks.every(block => block.hit)) {
             ship.destroyed = true
             last = constants.SHOT.DESTROY
           }
           this.setState({
             lastShot: last,
             ships: ships.map(s =>
-              (s.id === ship.id) ?
-              ship :
-              s
+              (s.id === ship.id) 
+                ? ship 
+                : s
             )
           })
           this.updateBoard()
         }
-        this.props.selectCell()
+        this.props.clickOnBlock()
       }
     }
   }
@@ -116,18 +123,18 @@ export default class PlayerBoard extends Component {
         <div className="Board">
           <Columns />
           <Rows />
-          <div className="Board-Cells">
+          <div className="Board-Blocks">
             {
-              this.state.cells.map((row, i) => {
-                return row.map((cell, col) => {
+              this.state.blocks.map((row, i) => {
+                return row.map((block, col) => {
                   return (
-                    <Cell 
+                    <Block 
                       key={`${i} ${col}`}
                       row={i}
                       col={col}
-                      data={cell}
+                      data={block}
                       player={true}
-                      handle={() => {}}
+                      handleClick={() => {}}
                     />
                   )
                 })

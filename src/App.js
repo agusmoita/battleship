@@ -8,20 +8,21 @@ import EndSurrender from './screens/EndSurrender';
 import Start from './screens/Start';
 import ships from './util/ships';
 import _ from 'lodash';
+import constants from './util/constants';
 
 class App extends Component {
   state = {
     currentShip: 1,
-    ships,
-    name: ''
+    myShips: ships,
+    playerName: ''
   }
   restart = () => {
     this.setState({
       currentShip: 1,
-      ships: this.state.ships.map(s => {
+      myShips: this.state.myShips.map(ship => {
         return {
-          ...s,
-          cells: s.cells.map(c => {
+          ...ship,
+          blocks: ship.blocks.map(c => {
             return {
               row: null,
               col: null,
@@ -35,18 +36,17 @@ class App extends Component {
   }
   setName = (name) => {
     this.setState({
-      name
+      playerName: name
     })
   }
   changeCurrentShip = (id) => {
     if (id === this.state.currentShip) {
       this.setState({
-        ships: this.state.ships.map(s => {
-          if (s.id === this.state.currentShip) {
-            s.direction = s.direction === 'horizontal' ? 'vertical' : 'horizontal';
+        myShips: this.state.myShips.map(ship => {
+          if (ship.id === this.state.currentShip) {
+            ship.direction = ship.direction === 'horizontal' ? 'vertical' : 'horizontal';
           }
-
-          return s;
+          return ship;
         })
       })
     } else {
@@ -55,12 +55,23 @@ class App extends Component {
       })
     }
   }
-  updateShips = (row, col) => {
+  getOtherShipsBlocks = () => {
+    const { currentShip, myShips } = this.state;
+    const otherShips = myShips.filter(ship => ship.id !== currentShip)
+    return _.flattenDepth(otherShips.map(ship => ship.blocks))
+  }
+  canPlaceInCoords = (row, col) => {
+    return this.getOtherShipsBlocks().every(block => {
+      return (
+        (block.row !== row || block.col !== col) &&
+        (row <= (constants.BOARD_SIZE - 1) && col <= (constants.BOARD_SIZE - 1))
+      );
+    })
+  }
+  placeShip = (row, col) => {
     let valid = [];
-    const { currentShip, ships } = this.state;
-    const ship = ships.find(s => s.id === currentShip)
-    const otherShips = ships.filter(s => s.id !== currentShip)
-    const allCells = _.flattenDepth(otherShips.map(s => s.cells))
+    const { currentShip, myShips } = this.state;
+    const ship = myShips.find(s => s.id === currentShip)
     let coords = [];
     const { length, direction } = ship;
     for (let index = 0; index < length; index++) {
@@ -69,21 +80,15 @@ class App extends Component {
         col: (direction === 'vertical' ? col : col + index),
         hit: false
       }
-      valid[index] = allCells.every(c => {
-        return (
-          (c.row !== coords[index].row || c.col !== coords[index].col)
-          &&
-          (coords[index].row <= 9 && coords[index].col <= 9)
-        );
-      })
+      valid[index] = this.canPlaceInCoords(coords[index].row, coords[index].col)
     }
     if (valid.every(v => v)) {
-      ship.cells = coords
+      ship.blocks = coords
       this.setState({
-        ships: ships.map(s =>
-          (s.id === ship.id) ?
-          ship :
-          s
+        myShips: myShips.map(s =>
+          (s.id === ship.id) 
+            ? ship 
+            : s
           )
       })
     }
@@ -95,15 +100,15 @@ class App extends Component {
           <Route path="/" exact render={(props) => (
             <Start {...props} 
               restart={this.restart} 
-              call={this.updateShips} 
-              ships={this.state.ships} 
+              place={this.placeShip} 
+              ships={this.state.myShips} 
               current={this.state.currentShip} 
               change={this.changeCurrentShip}
               setName={this.setName}
             />
           )} />
           <Route path="/play" render={(props) => (
-            <Game {...props} ships={this.state.ships} player={this.state.name} />
+            <Game {...props} ships={this.state.myShips} player={this.state.playerName} />
           )} />
           <Route path="/won" component={EndWon} />
           <Route path="/lost" component={EndLost} />

@@ -1,11 +1,11 @@
 import React from 'react';
-import End from './End';
+import EndGame from './EndGame';
 
 const EndWon = () => {
   return (
-    <End>
+    <EndGame>
       <h1>You won</h1>
-    </End>
+    </EndGame>
   )
 }
 

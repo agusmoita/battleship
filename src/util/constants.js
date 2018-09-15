@@ -1,4 +1,5 @@
 const constants = {
+  BOARD_SIZE: 10,
   DATA: {
     BLANK: 0,
     SHIP: 1,
