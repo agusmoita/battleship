@@ -97,14 +97,11 @@ export default class PlayerBoard extends Component {
       }
       const { hitOnNewShip, newShipCoords } = this.state
       if (hitOnNewShip) {
-        console.log('holis')
         rowPosibilities.from = ((newShipCoords.row - 3 >= 0) ? newShipCoords.row - 3 : 0)
         rowPosibilities.to = ((newShipCoords.row + 3 <= 9) ? newShipCoords.row + 3 : 9)
         colPosibilities.from = ((newShipCoords.col - 3 >= 0) ? newShipCoords.col - 3 : 0)
         colPosibilities.to = ((newShipCoords.col + 3 <= 9) ? newShipCoords.col + 3 : 9)
       }
-      console.dir(rowPosibilities)
-      console.dir(colPosibilities)
       const row = _.random(rowPosibilities.from, rowPosibilities.to)
       const col = _.random(colPosibilities.from, colPosibilities.to)
       const blocks = this.state.blocks;
