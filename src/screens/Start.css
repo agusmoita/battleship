@@ -1,10 +1,19 @@
-.Start {
+.Start .content {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-end;
+    margin: 15px auto 40px auto;
 }
 
 .help {
     font-size: .8em;
     font-style: italic;
+}
+
+input {
+    padding: 10px 20px;
+    width: 15vw;
+    text-align: center;
+    border: 1px solid black;
+    border-radius: 5px;
 }

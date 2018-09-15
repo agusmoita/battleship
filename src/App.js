@@ -12,7 +12,8 @@ import _ from 'lodash';
 class App extends Component {
   state = {
     currentShip: 1,
-    ships
+    ships,
+    name: ''
   }
   restart = () => {
     this.setState({
@@ -30,6 +31,11 @@ class App extends Component {
           destroyed: false
         }
       })
+    })
+  }
+  setName = (name) => {
+    this.setState({
+      name
     })
   }
   changeCurrentShip = (id) => {
@@ -87,10 +93,17 @@ class App extends Component {
       <div className="App">
         <Switch>
           <Route path="/" exact render={(props) => (
-            <Start {...props} restart={this.restart} call={this.updateShips} ships={this.state.ships} current={this.state.currentShip} change={this.changeCurrentShip}/>
+            <Start {...props} 
+              restart={this.restart} 
+              call={this.updateShips} 
+              ships={this.state.ships} 
+              current={this.state.currentShip} 
+              change={this.changeCurrentShip}
+              setName={this.setName}
+            />
           )} />
           <Route path="/play" render={(props) => (
-            <Game {...props} ships={this.state.ships} />
+            <Game {...props} ships={this.state.ships} player={this.state.name} />
           )} />
           <Route path="/won" component={EndWon} />
           <Route path="/lost" component={EndLost} />

@@ -33,7 +33,7 @@ class Game extends Component {
   render() {
     return (
       <div className="Game">
-        <h1>Playing: { this.state.myTurn ? 'Player' : 'CPU' }</h1>
+        <h1>Playing: { this.state.myTurn ? this.props.player : 'CPU' }</h1>
         <div className="Boards">
           <PlayerBoard myTurn={this.state.myTurn} selectCell={this.changeTurn} finish={this.finishGame} ships={this.props.ships} />
           <EnemyBoard myTurn={!this.state.myTurn} selectCell={this.changeTurn} finish={this.finishGame} />
