@@ -22,6 +22,11 @@ export default class PlayerBoard extends Component {
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     ],
     lastShot: null,
+    hitOnNewShip: false,
+    newShipCoords: {
+      row: null,
+      col: null
+    },
     ships: []
   }
   componentDidMount() {
@@ -34,6 +39,11 @@ export default class PlayerBoard extends Component {
     })
     this.setState({
       lastShot: null,
+      hitOnNewShip: false,
+      newShipCoords: {
+        row: null,
+        col: null
+      },
       blocks,
       ships
     })
@@ -44,7 +54,7 @@ export default class PlayerBoard extends Component {
   componentDidUpdate(prevProps) {
     if (this.props.myTurn !== prevProps.myTurn && this.props.myTurn === false) {
       this.sleep().then(() => {
-        this.shoot(_.random(0, 9), _.random(0, 9))
+        this.shoot()
       })
     }
   }
@@ -75,12 +85,32 @@ export default class PlayerBoard extends Component {
   shipAreIn = (ship, row, col) => {
     return this.findShipBlock(ship, row, col) !== undefined
   }
-  shoot = (row, col) => {
+  shoot = () => {
     if (!this.props.myTurn) {
+      const rowPosibilities = {
+        from: 0,
+        to: 9
+      }
+      const colPosibilities = {
+        from: 0,
+        to: 9
+      }
+      const { hitOnNewShip, newShipCoords } = this.state
+      if (hitOnNewShip) {
+        console.log('holis')
+        rowPosibilities.from = ((newShipCoords.row - 3 >= 0) ? newShipCoords.row - 3 : 0)
+        rowPosibilities.to = ((newShipCoords.row + 3 <= 9) ? newShipCoords.row + 3 : 9)
+        colPosibilities.from = ((newShipCoords.col - 3 >= 0) ? newShipCoords.col - 3 : 0)
+        colPosibilities.to = ((newShipCoords.col + 3 <= 9) ? newShipCoords.col + 3 : 9)
+      }
+      console.dir(rowPosibilities)
+      console.dir(colPosibilities)
+      const row = _.random(rowPosibilities.from, rowPosibilities.to)
+      const col = _.random(colPosibilities.from, colPosibilities.to)
       const blocks = this.state.blocks;
       const block = blocks[row][col];
       if (block >= constants.DATA.WATER) {
-        this.shoot(_.random(0, 9), _.random(0, 9))
+        this.shoot()
       } else {
         if (block === constants.DATA.BLANK) {
           blocks[row][col] = constants.DATA.WATER;
@@ -92,9 +122,6 @@ export default class PlayerBoard extends Component {
           const ships = this.state.ships;
           const ship = ships.find(s => {
             return this.shipAreIn(s, row, col)
-            // return (s.blocks.find(b => {
-            //   return b.row === row && b.col === col
-            // }) !== undefined)
           })
           this.findShipBlock(ship, row, col).hit = true
           let last = constants.SHOT.HIT
@@ -102,8 +129,14 @@ export default class PlayerBoard extends Component {
             ship.destroyed = true
             last = constants.SHOT.DESTROY
           }
+          const newHit = last === constants.SHOT.HIT
+          const newCoords = (hitOnNewShip)
+            ? newShipCoords
+            : { row, col }
           this.setState({
             lastShot: last,
+            hitOnNewShip: newHit,
+            newShipCoords: newCoords,
             ships: ships.map(s =>
               (s.id === ship.id) 
                 ? ship 
