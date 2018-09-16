@@ -75,27 +75,6 @@ export default class PlayerBoard extends Component {
   shipAreIn = (ship, row, col) => {
     return this.findShipBlock(ship, row, col) !== undefined
   }
-  // isStraight = (row, col) => {
-  //   const { lastHitCoords } = this.state
-  //   const newRow = lastHitCoords.row
-  //   const newCol = lastHitCoords.col
-
-  //   if (row < newRow && col !== newCol) return false;
-  //   if (row > newRow && col !== newCol) return false;
-  //   if (col < newCol && row !== newRow) return false;
-  //   if (col > newCol && row !== newRow) return false;
-  //   if (row === newRow && col === newCol) return false;
-  //   return true;
-  // }
-  // check = (row, col, r, c) => {
-  //   const blocks = this.state.blocks;
-  //   if (r < row && blocks[r+1][c] === CONST.DATA.WATER) return false;
-  //   if (r > row && blocks[r-1][c] === CONST.DATA.WATER) return false;
-  //   if (c < col && blocks[r][c+1] === CONST.DATA.WATER) return false;
-  //   if (c > col && blocks[r][c-1] === CONST.DATA.WATER) return false;
-    
-  //   return true
-  // }
   updateProbs = (probs, x, y) => {
     const blocks = this.state.blocks
     if (0 <= x - 1 && blocks[x - 1][y] < CONST.DATA.WATER) {
