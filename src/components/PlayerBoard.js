@@ -79,15 +79,27 @@ export default class PlayerBoard extends Component {
     const blocks = this.state.blocks
     if (0 <= x - 1 && blocks[x - 1][y] < CONST.DATA.WATER) {
       probs[x - 1][y] += 1
+      if (x + 1 <= CONST.BOARD_SIZE - 1 && blocks[x + 1][y] === CONST.DATA.HIT) {
+        probs[x - 1][y] += 1
+      }
     }
     if (x + 1 <= CONST.BOARD_SIZE - 1 && blocks[x + 1][y] < CONST.DATA.WATER) {
       probs[x + 1][y] += 1
+      if (0 <= x - 1 && blocks[x - 1][y] === CONST.DATA.HIT) {
+        probs[x + 1][y] += 1
+      }
     }
     if (0 <= y - 1 && blocks[x][y - 1] < CONST.DATA.WATER) {
       probs[x][y - 1] += 1
+      if (y + 1 <= CONST.BOARD_SIZE - 1 && blocks[x][y + 1] === CONST.DATA.HIT) {
+        probs[x][y - 1] += 1
+      }
     }
     if (y + 1 <= CONST.BOARD_SIZE - 1 && blocks[x][y + 1] < CONST.DATA.WATER) {
       probs[x][y + 1] += 1
+      if (0 <= y - 1 && blocks[x][y - 1] === CONST.DATA.HIT) {
+        probs[x][y + 1] += 1
+      }
     }
     
   }
