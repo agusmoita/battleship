@@ -97,6 +97,15 @@ export default class PlayerBoard extends Component {
     if (row === newRow && col === newCol) return false;
     return true;
   }
+  check = (row, col, r, c) => {
+    const blocks = this.state.blocks;
+    if (r < row && blocks[r+1][c] === CONST.DATA.WATER) return false;
+    if (r > row && blocks[r-1][c] === CONST.DATA.WATER) return false;
+    if (c < col && blocks[r][c+1] === CONST.DATA.WATER) return false;
+    if (c > col && blocks[r][c-1] === CONST.DATA.WATER) return false;
+    
+    return true
+  }
   getNearShot = (radius, row, col) => {
     const blocks = this.state.blocks;
     const rowPosibilities = [row - radius, row, row + radius];
@@ -106,8 +115,10 @@ export default class PlayerBoard extends Component {
       colPosibilities.forEach(c => {
         if (0 <= r && r <= CONST.BOARD_SIZE - 1 && 0 <= c && c <= CONST.BOARD_SIZE - 1) {
           if (this.isStraight(r, c)) {
-            if (blocks[r][c] === CONST.DATA.BLANK || blocks[r][c] === CONST.DATA.SHIP) {
-              posibilities.push([r, c])
+            if (this.check(row, col, r, c)) {
+              if (blocks[r][c] === CONST.DATA.BLANK || blocks[r][c] === CONST.DATA.SHIP) {
+                posibilities.push([r, c])
+              }
             }
           }
         }
