@@ -22,8 +22,8 @@ export default class PlayerBoard extends Component {
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     ],
     lastShot: null,
-    hitOnNewShip: false,
-    newShipCoords: {
+    hitOnShip: false,
+    lastHitCoords: {
       row: null,
       col: null
     },
@@ -39,8 +39,8 @@ export default class PlayerBoard extends Component {
     })
     this.setState({
       lastShot: null,
-      hitOnNewShip: false,
-      newShipCoords: {
+      hitOnShip: false,
+      lastHitCoords: {
         row: null,
         col: null
       },
@@ -85,26 +85,53 @@ export default class PlayerBoard extends Component {
   shipAreIn = (ship, row, col) => {
     return this.findShipBlock(ship, row, col) !== undefined
   }
+  isStraight = (row, col) => {
+    const { lastHitCoords } = this.state
+    const newRow = lastHitCoords.row
+    const newCol = lastHitCoords.col
+
+    if (row < newRow && col !== newCol) return false;
+    if (row > newRow && col !== newCol) return false;
+    if (col < newCol && row !== newRow) return false;
+    if (col > newCol && row !== newRow) return false;
+    if (row === newRow && col === newCol) return false;
+    return true;
+  }
+  getNearShot = (radius, row, col) => {
+    const blocks = this.state.blocks;
+    const rowPosibilities = [row - radius, row, row + radius];
+    const colPosibilities = [col - radius, col, col + radius];
+    const posibilities = []
+    rowPosibilities.forEach(r => {
+      colPosibilities.forEach(c => {
+        if (0 <= r && r <= 9 && 0 <= c && c <= 9) {
+          if (this.isStraight(r, c)) {
+            if (blocks[r][c] === constants.DATA.BLANK || blocks[r][c] === constants.DATA.SHIP) {
+              posibilities.push([r, c])
+            }
+          }
+        }
+      })
+    })
+    const shot = _.sample(posibilities);
+    if (shot) {
+      return shot;
+    } else {
+      return this.getNearShot(radius + 1, row, col)
+    }
+  }
   shoot = () => {
     if (!this.props.myTurn) {
-      const rowPosibilities = {
-        from: 0,
-        to: 9
+      let row = 0
+      let col = 0
+      const { blocks, hitOnShip, lastHitCoords } = this.state
+      if (hitOnShip) {
+        const shot = this.getNearShot(1, lastHitCoords.row, lastHitCoords.col);
+        [row, col] = shot
+      } else {
+        row = _.random(0, 9)
+        col = _.random(0, 9)
       }
-      const colPosibilities = {
-        from: 0,
-        to: 9
-      }
-      const { hitOnNewShip, newShipCoords } = this.state
-      if (hitOnNewShip) {
-        rowPosibilities.from = ((newShipCoords.row - 3 >= 0) ? newShipCoords.row - 3 : 0)
-        rowPosibilities.to = ((newShipCoords.row + 3 <= 9) ? newShipCoords.row + 3 : 9)
-        colPosibilities.from = ((newShipCoords.col - 3 >= 0) ? newShipCoords.col - 3 : 0)
-        colPosibilities.to = ((newShipCoords.col + 3 <= 9) ? newShipCoords.col + 3 : 9)
-      }
-      const row = _.random(rowPosibilities.from, rowPosibilities.to)
-      const col = _.random(colPosibilities.from, colPosibilities.to)
-      const blocks = this.state.blocks;
       const block = blocks[row][col];
       if (block >= constants.DATA.WATER) {
         this.shoot()
@@ -127,13 +154,11 @@ export default class PlayerBoard extends Component {
             last = constants.SHOT.DESTROY
           }
           const newHit = last === constants.SHOT.HIT
-          const newCoords = (hitOnNewShip)
-            ? newShipCoords
-            : { row, col }
+          const newCoords = { row, col }
           this.setState({
             lastShot: last,
-            hitOnNewShip: newHit,
-            newShipCoords: newCoords,
+            hitOnShip: newHit,
+            lastHitCoords: newCoords,
             ships: ships.map(s =>
               (s.id === ship.id) 
                 ? ship 
