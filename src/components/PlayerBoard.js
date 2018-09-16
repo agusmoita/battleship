@@ -22,11 +22,6 @@ export default class PlayerBoard extends Component {
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     ],
     lastShot: null,
-    hitOnShip: false,
-    lastHitCoords: {
-      row: null,
-      col: null
-    },
     ships: []
   }
   componentDidMount() {
@@ -39,11 +34,6 @@ export default class PlayerBoard extends Component {
     })
     this.setState({
       lastShot: null,
-      hitOnShip: false,
-      lastHitCoords: {
-        row: null,
-        col: null
-      },
       blocks,
       ships
     })
@@ -85,64 +75,93 @@ export default class PlayerBoard extends Component {
   shipAreIn = (ship, row, col) => {
     return this.findShipBlock(ship, row, col) !== undefined
   }
-  isStraight = (row, col) => {
-    const { lastHitCoords } = this.state
-    const newRow = lastHitCoords.row
-    const newCol = lastHitCoords.col
+  // isStraight = (row, col) => {
+  //   const { lastHitCoords } = this.state
+  //   const newRow = lastHitCoords.row
+  //   const newCol = lastHitCoords.col
 
-    if (row < newRow && col !== newCol) return false;
-    if (row > newRow && col !== newCol) return false;
-    if (col < newCol && row !== newRow) return false;
-    if (col > newCol && row !== newRow) return false;
-    if (row === newRow && col === newCol) return false;
-    return true;
-  }
-  check = (row, col, r, c) => {
-    const blocks = this.state.blocks;
-    if (r < row && blocks[r+1][c] === CONST.DATA.WATER) return false;
-    if (r > row && blocks[r-1][c] === CONST.DATA.WATER) return false;
-    if (c < col && blocks[r][c+1] === CONST.DATA.WATER) return false;
-    if (c > col && blocks[r][c-1] === CONST.DATA.WATER) return false;
+  //   if (row < newRow && col !== newCol) return false;
+  //   if (row > newRow && col !== newCol) return false;
+  //   if (col < newCol && row !== newRow) return false;
+  //   if (col > newCol && row !== newRow) return false;
+  //   if (row === newRow && col === newCol) return false;
+  //   return true;
+  // }
+  // check = (row, col, r, c) => {
+  //   const blocks = this.state.blocks;
+  //   if (r < row && blocks[r+1][c] === CONST.DATA.WATER) return false;
+  //   if (r > row && blocks[r-1][c] === CONST.DATA.WATER) return false;
+  //   if (c < col && blocks[r][c+1] === CONST.DATA.WATER) return false;
+  //   if (c > col && blocks[r][c-1] === CONST.DATA.WATER) return false;
     
-    return true
+  //   return true
+  // }
+  updateProbs = (probs, x, y) => {
+    const blocks = this.state.blocks
+    if (0 <= x - 1 && blocks[x - 1][y] < CONST.DATA.WATER) {
+      probs[x - 1][y] += 1
+    }
+    if (x + 1 <= CONST.BOARD_SIZE - 1 && blocks[x + 1][y] < CONST.DATA.WATER) {
+      probs[x + 1][y] += 1
+    }
+    if (0 <= y - 1 && blocks[x][y - 1] < CONST.DATA.WATER) {
+      probs[x][y - 1] += 1
+    }
+    if (y + 1 <= CONST.BOARD_SIZE - 1 && blocks[x][y + 1] < CONST.DATA.WATER) {
+      probs[x][y + 1] += 1
+    }
+    
   }
-  getNearShot = (radius, row, col) => {
-    const blocks = this.state.blocks;
-    const rowPosibilities = [row - radius, row, row + radius];
-    const colPosibilities = [col - radius, col, col + radius];
-    const posibilities = []
-    rowPosibilities.forEach(r => {
-      colPosibilities.forEach(c => {
-        if (0 <= r && r <= CONST.BOARD_SIZE - 1 && 0 <= c && c <= CONST.BOARD_SIZE - 1) {
-          if (this.isStraight(r, c)) {
-            if (this.check(row, col, r, c)) {
-              if (blocks[r][c] === CONST.DATA.BLANK || blocks[r][c] === CONST.DATA.SHIP) {
-                posibilities.push([r, c])
-              }
-            }
-          }
+  indexToBlock = index => {
+    let i = index + 1
+    let row = Math.trunc(i / 10)
+    let col = (i % 10) - 1
+    return [row, col];
+  }
+  getShot = (probs) => {
+    const posibilities = _(probs).flatten().map((p, index) => {
+      let [row, col] = this.indexToBlock(index);
+      return {
+        row,
+        col,
+        prob: p
+      }
+    }).filter(p => p.prob > 0).orderBy('prob', 'desc').value()
+    return _.head(posibilities);
+  }
+  calculateShot = () => {
+    const probs = [
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ]
+    const blocks = this.state.blocks
+    blocks.forEach((row, x) => {
+      row.forEach((block, y) => {
+        if (block === CONST.DATA.HIT) {
+          this.updateProbs(probs, x, y)
         }
       })
     })
-    const shot = _.sample(posibilities);
+    const shot = this.getShot(probs);
     if (shot) {
-      return shot;
+      return [shot.row, shot.col];
     } else {
-      return this.getNearShot(radius + 1, row, col)
+      return [_.random(0, CONST.BOARD_SIZE - 1), _.random(0, CONST.BOARD_SIZE - 1)]
     }
   }
   shoot = () => {
     if (!this.props.myTurn) {
-      let row = 0
-      let col = 0
-      const { blocks, hitOnShip, lastHitCoords } = this.state
-      if (hitOnShip) {
-        const shot = this.getNearShot(1, lastHitCoords.row, lastHitCoords.col);
-        [row, col] = shot
-      } else {
-        row = _.random(0, CONST.BOARD_SIZE - 1)
-        col = _.random(0, CONST.BOARD_SIZE - 1)
-      }
+      const blocks = this.state.blocks
+      const shot = this.calculateShot();
+      const [row, col] = shot
       const block = blocks[row][col];
       if (block >= CONST.DATA.WATER) {
         this.shoot()
@@ -164,12 +183,8 @@ export default class PlayerBoard extends Component {
             ship.destroyed = true
             last = CONST.SHOT.DESTROY
           }
-          const newHit = last === CONST.SHOT.HIT
-          const newCoords = { row, col }
           this.setState({
             lastShot: last,
-            hitOnShip: newHit,
-            lastHitCoords: newCoords,
             ships: ships.map(s =>
               (s.id === ship.id) 
                 ? ship 
