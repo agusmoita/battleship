@@ -103,15 +103,14 @@ export default class PlayerBoard extends Component {
     }
     
   }
-  indexToBlock = index => {
-    let i = index + 1
-    let row = Math.trunc(i / 10)
-    let col = (i % 10) - 1
+  indexToCoord = index => {
+    const row = Math.trunc(index / 10)
+    const col = index % 10
     return [row, col];
   }
   getShot = (probs) => {
     const posibilities = _(probs).flatten().map((p, index) => {
-      let [row, col] = this.indexToBlock(index);
+      let [row, col] = this.indexToCoord(index);
       return {
         row,
         col,
@@ -165,6 +164,7 @@ export default class PlayerBoard extends Component {
           })
         } else {
           const ships = this.state.ships;
+          console.log(row, col)
           const ship = ships.find(s => {
             return this.shipAreIn(s, row, col)
           })
