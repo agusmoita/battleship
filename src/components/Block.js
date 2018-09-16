@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import './Block.css';
-import constants from '../util/constants';
+import CONST from '../util/constants';
 
 class Block extends Component {
     render() {
         const { data, handleClick, row, col } = this.props;
-        const { DATA, FILL } = constants
+        const { DATA, FILL } = CONST
         let fill = FILL.BLANK;
         switch (data) {
             case DATA.SHIP:

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './Ship.css'
 import Block from './Block';
-import constants from '../util/constants'
+import CONST from '../util/constants'
 
 class Ship extends Component {
   handleClick = () => {
@@ -17,7 +17,7 @@ class Ship extends Component {
             return (
               <Block
                 key={`${ship.id} ${i}`}
-                data={constants.DATA.SHIP}
+                data={CONST.DATA.SHIP}
                 row={block.row}
                 col={block.col}
                 player

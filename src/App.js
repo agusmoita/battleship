@@ -8,7 +8,7 @@ import EndSurrender from './screens/EndSurrender';
 import Start from './screens/Start';
 import ships from './util/ships';
 import _ from 'lodash';
-import constants from './util/constants';
+import CONST from './util/constants';
 
 class App extends Component {
   state = {
@@ -64,7 +64,7 @@ class App extends Component {
     return this.getOtherShipsBlocks().every(block => {
       return (
         (block.row !== row || block.col !== col) &&
-        (row <= (constants.BOARD_SIZE - 1) && col <= (constants.BOARD_SIZE - 1))
+        (row <= (CONST.BOARD_SIZE - 1) && col <= (CONST.BOARD_SIZE - 1))
       );
     })
   }

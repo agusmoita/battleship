@@ -6,7 +6,7 @@ import shipsTemplate from '../util/ships';
 import LastShot from "./LastShot";
 import Columns from "./Columns";
 import Rows from "./Rows";
-import constants from '../util/constants';
+import CONST from '../util/constants';
 
 export default class EnemyBoard extends Component {
   state = {
@@ -33,7 +33,7 @@ export default class EnemyBoard extends Component {
     return this.getOtherShipsBlocks(ships, ship.id).every(block => {
       return (
         (block.row !== row || block.col !== col) &&
-        (row <= (constants.BOARD_SIZE - 1) && col <= (constants.BOARD_SIZE - 1))
+        (row <= (CONST.BOARD_SIZE - 1) && col <= (CONST.BOARD_SIZE - 1))
       );
     })
   }
@@ -76,7 +76,7 @@ export default class EnemyBoard extends Component {
     const blocks = this.state.blocks;
     ships.forEach((ship) => {
       ship.blocks.forEach((block) => {
-        blocks[block.row][block.col] = constants.DATA.SHIP;
+        blocks[block.row][block.col] = CONST.DATA.SHIP;
       })
     })
     this.setState({
@@ -91,9 +91,9 @@ export default class EnemyBoard extends Component {
     ships.forEach((ship) => {
       const destroyed = ship.destroyed
       ship.blocks.forEach((block) => {
-        let fill = constants.DATA.SHIP;
-        if (destroyed) fill = constants.DATA.DESTROY;
-        else if (block.hit) fill = constants.DATA.HIT;
+        let fill = CONST.DATA.SHIP;
+        if (destroyed) fill = CONST.DATA.DESTROY;
+        else if (block.hit) fill = CONST.DATA.HIT;
         blocks[block.row][block.col] = fill
       })
     })
@@ -108,11 +108,11 @@ export default class EnemyBoard extends Component {
     if (!this.props.myTurn) {
       const blocks = this.state.blocks;
       const block = blocks[row][col];
-      if (block < constants.DATA.WATER) {
-        if (block === constants.DATA.BLANK) {
-          blocks[row][col] = constants.DATA.WATER;
+      if (block < CONST.DATA.WATER) {
+        if (block === CONST.DATA.BLANK) {
+          blocks[row][col] = CONST.DATA.WATER;
           this.setState({
-            lastShot: constants.SHOT.WATER,
+            lastShot: CONST.SHOT.WATER,
             blocks
           })
         } else {
@@ -125,10 +125,10 @@ export default class EnemyBoard extends Component {
           ship.blocks.find(c => {
             return c.row === row && c.col === col
           }).hit = true
-          let last = constants.SHOT.HIT
+          let last = CONST.SHOT.HIT
           if (_.every(ship.blocks, 'hit')) {
             ship.destroyed = true
-            last = constants.SHOT.DESTROY
+            last = CONST.SHOT.DESTROY
           }
           this.setState({
             lastShot: last,

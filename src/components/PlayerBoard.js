@@ -5,7 +5,7 @@ import Block from './Block';
 import LastShot from "./LastShot";
 import Columns from './Columns';
 import Rows from './Rows';
-import constants from '../util/constants';
+import CONST from '../util/constants';
 
 export default class PlayerBoard extends Component {
   state = {
@@ -34,7 +34,7 @@ export default class PlayerBoard extends Component {
     const blocks = this.state.blocks;
     ships.forEach((ship) => {
       ship.blocks.forEach((block) => {
-        blocks[block.row][block.col] = constants.DATA.SHIP;
+        blocks[block.row][block.col] = CONST.DATA.SHIP;
       })
     })
     this.setState({
@@ -64,9 +64,9 @@ export default class PlayerBoard extends Component {
     ships.forEach((ship) => {
       const destroyed = ship.destroyed
       ship.blocks.forEach((block) => {
-        let fill = constants.DATA.SHIP;
-        if (destroyed) fill = constants.DATA.DESTROY
-        else if (block.hit) fill = constants.DATA.HIT
+        let fill = CONST.DATA.SHIP;
+        if (destroyed) fill = CONST.DATA.DESTROY
+        else if (block.hit) fill = CONST.DATA.HIT
         blocks[block.row][block.col] = fill
       })
     })
@@ -104,9 +104,9 @@ export default class PlayerBoard extends Component {
     const posibilities = []
     rowPosibilities.forEach(r => {
       colPosibilities.forEach(c => {
-        if (0 <= r && r <= 9 && 0 <= c && c <= 9) {
+        if (0 <= r && r <= CONST.BOARD_SIZE - 1 && 0 <= c && c <= CONST.BOARD_SIZE - 1) {
           if (this.isStraight(r, c)) {
-            if (blocks[r][c] === constants.DATA.BLANK || blocks[r][c] === constants.DATA.SHIP) {
+            if (blocks[r][c] === CONST.DATA.BLANK || blocks[r][c] === CONST.DATA.SHIP) {
               posibilities.push([r, c])
             }
           }
@@ -129,17 +129,17 @@ export default class PlayerBoard extends Component {
         const shot = this.getNearShot(1, lastHitCoords.row, lastHitCoords.col);
         [row, col] = shot
       } else {
-        row = _.random(0, 9)
-        col = _.random(0, 9)
+        row = _.random(0, CONST.BOARD_SIZE - 1)
+        col = _.random(0, CONST.BOARD_SIZE - 1)
       }
       const block = blocks[row][col];
-      if (block >= constants.DATA.WATER) {
+      if (block >= CONST.DATA.WATER) {
         this.shoot()
       } else {
-        if (block === constants.DATA.BLANK) {
-          blocks[row][col] = constants.DATA.WATER;
+        if (block === CONST.DATA.BLANK) {
+          blocks[row][col] = CONST.DATA.WATER;
           this.setState({
-            lastShot: constants.SHOT.WATER,
+            lastShot: CONST.SHOT.WATER,
             blocks
           })
         } else {
@@ -148,12 +148,12 @@ export default class PlayerBoard extends Component {
             return this.shipAreIn(s, row, col)
           })
           this.findShipBlock(ship, row, col).hit = true
-          let last = constants.SHOT.HIT
+          let last = CONST.SHOT.HIT
           if (ship.blocks.every(block => block.hit)) {
             ship.destroyed = true
-            last = constants.SHOT.DESTROY
+            last = CONST.SHOT.DESTROY
           }
-          const newHit = last === constants.SHOT.HIT
+          const newHit = last === CONST.SHOT.HIT
           const newCoords = { row, col }
           this.setState({
             lastShot: last,
